@@ -93,11 +93,13 @@ def setup_cerebro_with_kmeans(kmeans, up_clusters, scaler):
     cerebro = bt.Cerebro()
 
     # Load your data files for each ticker
+
     for ticker in tickers:
         data = bt.feeds.YahooFinanceCSVData(
             dataname=f"data/{ticker}.csv",
             fromdate=datetime(2016, 1, 1),
             todate=datetime(2024, 12, 31),
+            plot=False,
         )
         cerebro.adddata(data)
 
@@ -111,5 +113,9 @@ def setup_cerebro_with_kmeans(kmeans, up_clusters, scaler):
 
 # Assuming 'kmeans', 'up_clusters', and 'scaler' are already defined based on 2000-2005 data
 cerebro = setup_cerebro_with_kmeans(kmeans, up_clusters, scaler)
-cerebro.run()
+cerebro.addobserver(bt.observers.Value)
+cerebro.addobserver(bt.observers.DrawDown)
+cerebro.addobserver(bt.observers.Cash)
+
+cerebro.run(stdstats=False)
 cerebro.plot()
