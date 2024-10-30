@@ -1,0 +1,55 @@
+# Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Data files
+*.csv
+*.h5
+*.parquet
+data/
+
+# Log files
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Backtrader generated files
+backtest_results/
+*.pkl
+
+# VSCode specific settings
+.vscode/
+
+# PyCharm specific settings
+.idea/
+
+# Spyder project settings
+.spyproject/
+
+# Jupyter Notebook configuration
+*.nbconvert.ipynb
+*.nbhtml
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+
+# Git settings
+*.swp
