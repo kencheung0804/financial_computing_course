@@ -19,7 +19,7 @@ class KMeansTradingStrategy(bt.Strategy):
 
         # Check each stock in the strategy
         for i, data in enumerate(self.datas):
-            if data._name != "QQQ":
+            if data._name != "2800.HK":
                 # Get last n days of Adj Close and Volume
                 last_n_days = self.get_last_n_days(data, self.params.lookback)
 

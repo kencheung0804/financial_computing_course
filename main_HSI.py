@@ -10,7 +10,7 @@ from strategy import KMeansTradingStrategy
 import os
 import quantstats as qs
 
-data_dir = "data"
+data_dir = "data_hsi"
 
 # Initialize an empty dictionary for the universe
 universe = []
@@ -21,7 +21,7 @@ for filename in os.listdir(data_dir):
     if filename.endswith(".csv"):
         # Create the ticker name by removing '.csv' from the filename
         ticker = filename.replace(".csv", "")
-        if ticker != "QQQ":
+        if ticker != "2800.HK":
             tickers.append(ticker)
 
         # Load the data and filter for 2010-2015
@@ -98,12 +98,27 @@ def setup_cerebro_with_kmeans(kmeans, up_clusters, scaler):
     # Load your data files for each ticker
 
     for ticker in tickers:
-        data = bt.feeds.YahooFinanceCSVData(
-            dataname=f"data/{ticker}.csv",
+        df = pd.read_csv(
+            f"data_hsi/{ticker}.csv", parse_dates=["Date"], index_col="Date"
+        )
+        data = bt.feeds.PandasData(
+            dataname=df,
             fromdate=datetime(2019, 1, 1),
             todate=datetime(2023, 1, 1),
             plot=False,
+            close=0,
+            high=2,
+            low=3,
+            open=4,
+            volume=5,
+            openinterest=-1,
         )
+        # data = bt.feeds.YahooFinanceCSVData(
+        #     dataname=f"data_hsi/{ticker}.csv",
+        #     fromdate=datetime(2023, 1, 1),
+        #     todate=datetime(2024, 11, 1),
+        #     plot=False,
+        # )
         cerebro.adddata(data)
 
     # Add strategy with KMeans model, clusters, and scaler
@@ -116,13 +131,27 @@ def setup_cerebro_with_kmeans(kmeans, up_clusters, scaler):
 
 # Assuming 'kmeans', 'up_clusters', and 'scaler' are already defined based on 2010-2015 data
 cerebro = setup_cerebro_with_kmeans(kmeans, up_clusters, scaler)
-benchmark = bt.feeds.YahooFinanceCSVData(
-    dataname=f"data/QQQ.csv",
+
+df = pd.read_csv(f"data_hsi/2800.HK.csv", parse_dates=["Date"], index_col="Date")
+benchmark = bt.feeds.PandasData(
+    dataname=df,
     fromdate=datetime(2019, 1, 1),
     todate=datetime(2023, 1, 1),
     plot=False,
+    close=0,
+    high=2,
+    low=3,
+    open=4,
+    volume=5,
+    openinterest=-1,
 )
-cerebro.adddata(benchmark, name="QQQ")
+# benchmark = bt.feeds.YahooFinanceCSVData(
+#     dataname=f"data_hsi/2800.HK.csv",
+#     fromdate=datetime(2023, 1, 1),
+#     todate=datetime(2024, 11, 1),
+#     plot=False,
+# )
+cerebro.adddata(benchmark, name="2800.HK")
 benchmark = benchmark
 cerebro.addobserver(
     bt.observers.Benchmark, data=benchmark, timeframe=bt.TimeFrame.NoTimeFrame
@@ -144,12 +173,12 @@ pyfoliozer = strats[0].analyzers.getbyname("pyfolio")
 returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
 returns.index = pd.to_datetime(returns.index).tz_localize(None)
 
-bench = qs.utils.download_returns("QQQ")
+bench = qs.utils.download_returns("2800.HK")
 bench.index = bench.index.tz_localize(None)
 print(bench)
 qs.reports.html(
     returns,
     bench,
-    output="TTP.html",
+    output="TTP_HK.html",
     title="TTP",
 )
